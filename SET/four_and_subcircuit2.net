@@ -1,0 +1,6 @@
+* 4-input AND gate from 3 2-input AND gates 
+Xand1 A1 B1 VGND VGND VPWR VPWR out_and1 sky130_fd_sc_hd__and2_1
+Xand2 A2 B2 VGND VGND VPWR VPWR out_and2 sky130_fd_sc_hd__and2_1
+Xand3 A3 B3 VGND VGND VPWR VPWR out_and3 sky130_fd_sc_hd__and2_1
+Xand4 A4 B4 VGND VGND VPWR VPWR out_and4 sky130_fd_sc_hd__and2_1
+*
