@@ -8,7 +8,7 @@
 .include /home/adept/Desktop/ngSpice/Example_!/full_adder_subcircuit.net
 *
 * MUX subcircuit 
-.subckt mux I0 I1 I2 I3 S0 S1 out_or1 VGND VPWR
+.subckt mux4 I0 I1 I2 I3 S0 S1 out_or1 VGND VPWR
 * 4-to-1 MUX
 Xand10 I0 out_inv1 out_inv2 VGND VGND VPWR VPWR out_and1 sky130_fd_sc_hd__and3_1
 Xand20 I1 S0 out_inv2 VGND VGND VPWR VPWR out_and2 sky130_fd_sc_hd__and3_1
@@ -19,8 +19,16 @@ Xinv20 S1 VGND VGND VPWR VPWR out_inv2 sky130_fd_sc_hd__inv_1
 Xor10 out_and1 out_and2 out_and3 out_and4 VGND VGND VPWR VPWR out_or1 sky130_fd_sc_hd__or4_1
 .ends
 *
+.subckt mux2 I0 I1 S0 out_or1 VGND VPWR
+* 2-to-1 MUX
+Xand10 I0 out_inv1 VGND VGND VPWR VPWR out_and1 sky130_fd_sc_hd__and2_1
+Xand20 I1 S0 VGND VGND VPWR VPWR out_and2 sky130_fd_sc_hd__and2_1
+Xinv10 S0 VGND VGND VPWR VPWR out_inv1 sky130_fd_sc_hd__inv_1
+Xor10 out_and1 out_and2 VGND VGND VPWR VPWR out_or1 sky130_fd_sc_hd__or2_1
+.ends
+*
 * MUX gate Instance
-Xand I0 I1 I2 I3 S0 S1 out_or1 VGND VPWR mux
+Xfinalmux arith_output logic_output S0 out_finalmux VGND VPWR mux2
 *
 VVDD VDD 0 vd
 Vgnd VGND 0 0
