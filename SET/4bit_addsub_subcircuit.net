@@ -1,0 +1,28 @@
+* Adder Subtractor with Mux Subcircuit
+.lib '/home/adept/Desktop/caravel_mpw7/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice' tt
+.include '/home/adept/Desktop/caravel_mpw7/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice'
+*
+.param vd=1.8V
+*
+* 2-to-1 Mux
+.subckt mux2 I0 I1 S0 out_or1 VGND VPWR
+Xand11 I0 out_inv1 VGND VGND VPWR VPWR out_and1 sky130_fd_sc_hd__and2_1
+Xand21 I1 S0 VGND VGND VPWR VPWR out_and2 sky130_fd_sc_hd__and2_1
+Xinv11 S0 VGND VGND VPWR VPWR out_inv1 sky130_fd_sc_hd__inv_1
+Xor11 out_and1 out_and2 VGND VGND VPWR VPWR out_or1 sky130_fd_sc_hd__or2_1
+.ends
+*
+* MUX gate Instance
+Xmux2 I0 I1 S0 out_or2 VGND VPWR mux2
+
+* 4 bit Adder Subtractor
+* https://en.wikipedia.org/wiki/Adder%E2%80%93subtractor#/media/File:4-bit_ripple_carry_adder-subtracter.svg
+.subckt fa A0 A1 A2 A3 B0 B1 B2 B3 C0 C1 C2 C3 S Cout VGND VPWR
+X1 A0 mux2
+
+
+
+.ends
+*
+
+ 
