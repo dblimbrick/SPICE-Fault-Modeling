@@ -14,15 +14,99 @@ Xor11 out_and1 out_and2 VGND VGND VPWR VPWR out_or1 sky130_fd_sc_hd__or2_1
 *
 * MUX gate Instance
 Xmux2 I0 I1 S0 out_or2 VGND VPWR mux2
-
-* 4 bit Adder Subtractor
-* https://en.wikipedia.org/wiki/Adder%E2%80%93subtractor#/media/File:4-bit_ripple_carry_adder-subtracter.svg
-.subckt fa A0 A1 A2 A3 B0 B1 B2 B3 C0 C1 C2 C3 S Cout VGND VPWR
-X1 A0 mux2
-
-
-
+*
+* Full adder subcircuit 
+* https://en.wikipedia.org/wiki/Adder_(electronics)#/media/File:Full-adder_logic_diagram.svg
+.subckt fa A B Cin S Cout VGND VPWR
+Xxor1 A B VGND VGND VPWR VPWR out_xor1 sky130_fd_sc_hd__xor2_1
+Xxor2 out_xor1 Cin VGND VGND VPWR VPWR S sky130_fd_sc_hd__xor2_1
+Xand1 out_xor1 Cin VGND VGND VPWR VPWR out_and1 sky130_fd_sc_hd__and2_1
+Xand2 A B VGND VGND VPWR VPWR out_and2 sky130_fd_sc_hd__and2_1
+Xor1 out_and1 out_and2 VGND VGND VPWR VPWR Cout sky130_fd_sc_hd__or2_1
 .ends
 *
+* Full adder instance
+Xadder1 A B Cin S Cout VGND VPWR fa
+*
+* 4 bit Adder Subtractor
+* https://en.wikipedia.org/wiki/Adder%E2%80%93subtractor#/media/File:4-bit_ripple_carry_adder-subtracter.svg
+.subckt fa1 A0 A1 A2 A3 B0 B1 B2 B3 notA0 notA1 notA2 notA3 mux2_0_out D S0 S1 S2 S3 C1 C2 C3 C4 VGND VPWR
+Xfa1 mux2_0_out B0 D S0 C1 VGND VGND VPWR VPWR fa
+Xinv1 A0 VGND VGND VPWR VPWR notA0 sky130_fd_sc_hd__inv_1
+Xmux2 B0 notA0 D VGND VGND VPWR VPWR mux2_0_out mux2
+*
+Xfa2 mux2_0_out B1 D S1 C2 VGND VGND VPWR VPWR fa
+Xinv2 A1 VGND VGND VPWR VPWR notA1 sky130_fd_sc_hd__inv_1
+Xmux21 B1 notA1 D VGND VGND VPWR VPWR mux2_0_out mux2
+*
+Xfa3 mux2_0_out B2 D S2 C3 VGND VGND VPWR VPWR fa
+Xinv3 A2 VGND VGND VPWR VPWR notA2 sky130_fd_sc_hd__inv_1
+Xmux22 B2 notA2 D VGND VGND VPWR VPWR mux2_0_out mux2
+*
+Xfa4 mux2_0_out B3 D S3 C4 VGND VGND VPWR VPWR fa
+Xinv4 A3 VGND VGND VPWR VPWR notA3 sky130_fd_sc_hd__inv_1
+Xmux23 B3 notA3 D VGND VGND VPWR VPWR mux2_0_out mux2
+.ends
+*
+* 4 bit Adder Subtractor Instance
+
+*
+*
+*
+*
+*
+*
+*
+VVDD VDD 0 vd
+Vgnd VGND 0 0
+Vdd VPWR VGND vd
+* A(0,1,2,3)= 1011    1011
+* B(0,1,2,3)= 0011 or 0010
+* First Example: I(0,1,2,3)= 1011
+* Second Example: I(0,1,2,3)= 0011
+* Third Example: I(0,1,2,3)= 1010
+* S0 = 0
+* S1 = 1
+VA1 A0 0 vd
+VA2 A1 0 0
+VA3 A2 0 vd
+VA4 A3 0 vd
+VB1 B0 0 0
+VB2 B1 0 0
+VB3 B2 0 vd
+VB4 B3 0 vd
+*
+VNotA0 notA0 0 0
+VNotA1 notA1 0 0
+VNotA2 notA2 0 0
+VNotA3 notA3 0 0
+*
+VI0 I0 0 vd
+VI1 I1 0 0
+VI2 I2 0 vd
+VI3 I3 0 vd
+VS0 S0 0 0
+VS1 S1 0 0
+*
+*V1 A0 0 pulse(0 1.8 0 1n 1n 15u 25u)
+*V2 B1 0 pulse(0 1.8 0 1n 1n 20u 50u)
+*V3  0 pulse(0 1.8 0 1n 1n 30u 50u)
+*V4  0 pulse(0 1.8 0 1n 1n 70u 100u)
+*V5  0 pulse(0 1.8 0 1n 1n 100u 200u)
+*V6  0 pulse(0 1.8 0 1n 1n 50u 100u)
+*
+.tran 1ps 10ns
+*
+.control
+run
+plot v(A1) v(A2) v(A3) v(A4) ylimit -1 3
+plot v(B1) v(B2) v(B3) v(B4) ylimit -1 3
+
+plot v(I0) v(I1) v(I2) v(I3) ylimit -1 3
+plot v(S0) v(S1) ylimit -1 3
+plot v(out_or1) ylimit -1 3 
+.endc
+*
+.END
 
  
