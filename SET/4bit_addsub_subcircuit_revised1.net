@@ -1,0 +1,102 @@
+* Adder Subtractor with Mux Subcircuit
+.lib '/home/adept/Desktop/caravel_mpw7/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice' tt
+.include '/home/adept/Desktop/caravel_mpw7/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice'
+*
+.param vd=1.8V
+*
+* 2-to-1 Mux
+.subckt mux2 I0 I1 S0 out_or1 VGND VPWR
+Xand11 I0 out_inv1 VGND VGND VPWR VPWR out_and1 sky130_fd_sc_hd__and2_1
+Xand21 I1 S0 VGND VGND VPWR VPWR out_and2 sky130_fd_sc_hd__and2_1
+Xinv11 S0 VGND VGND VPWR VPWR out_inv1 sky130_fd_sc_hd__inv_1
+Xor11 out_and1 out_and2 VGND VGND VPWR VPWR out_or1 sky130_fd_sc_hd__or2_1
+.ends
+*
+* MUX gate Instance
+*Xmux2 I0 I1 S0 out_or2 VGND VPWR mux2
+*
+* Full adder subcircuit 
+* https://en.wikipedia.org/wiki/Adder_(electronics)#/media/File:Full-adder_logic_diagram.svg
+.subckt fa A B Cin S Cout VGND VPWR
+Xxor1 A B VGND VGND VPWR VPWR out_xor1 sky130_fd_sc_hd__xor2_1
+Xxor2 out_xor1 Cin VGND VGND VPWR VPWR S sky130_fd_sc_hd__xor2_1
+Xand1 out_xor1 Cin VGND VGND VPWR VPWR out_and1 sky130_fd_sc_hd__and2_1
+Xand2 A B VGND VGND VPWR VPWR out_and2 sky130_fd_sc_hd__and2_1
+Xor1 out_and1 out_and2 VGND VGND VPWR VPWR Cout sky130_fd_sc_hd__or2_1
+.ends
+*
+* Full adder instance
+*Xadder1 A B Cin S Cout VGND VPWR fa
+*
+* 4 bit Adder Subtractor
+* https://en.wikipedia.org/wiki/Adder%E2%80%93subtractor#/media/File:4-bit_ripple_carry_adder-subtracter.svg
+.subckt fa1 A0 A1 A2 A3 B0 B1 B2 B3 D S0 S1 S2 S3 C4 VGND VPWR
+Xfa1 mux2_0_out B0 D S0 C1 VGND VPWR fa
+Xinv1 A0 VGND VGND VPWR VPWR notA0 sky130_fd_sc_hd__inv_1
+Xmux2 A0 notA0 D VGND VPWR mux2_0_out mux2
+*
+Xfa2 mux2_1_out B1 D S1 C2 VGND VPWR fa
+Xinv2 A1 VGND VGND VPWR VPWR notA1 sky130_fd_sc_hd__inv_1
+Xmux21 A1 notA1 D VGND VPWR mux2_1_out mux2
+*
+Xfa3 mux2_2_out B2 D S2 C3 VGND VPWR fa
+Xinv3 A2 VGND VGND VPWR VPWR notA2 sky130_fd_sc_hd__inv_1
+Xmux22 A2 notA2 D VGND VPWR mux2_2_out mux2
+*
+Xfa4 mux2_3_out B3 D S3 C4 VGND VPWR fa
+Xinv4 A3 VGND VGND VPWR VPWR notA3 sky130_fd_sc_hd__inv_1
+Xmux23 A3 notA3 D VGND VPWR mux2_3_out mux2
+.ends
+*
+* 4 bit Adder Subtractor Instance
+Xaddsub A0 A1 A2 A3 B0 B1 B2 B3 D S0 S1 S2 S3 C4 VGND VPWR fa1
+*
+VVDD VDD 0 vd
+Vgnd VGND 0 0
+Vdd VPWR VGND vd
+* A(0,1,2,3)= 1011
+* B(0,1,2,3)= 0110 or 0011
+* First Example: I(0,1,2,3)= 1011
+* Second Example: I(0,1,2,3)= 0011
+* Third Example: I(0,1,2,3)= 1010
+* S0 = 0
+* S1 = 1
+VA0 A0 0 vd
+VA1 A1 0 0
+VA2 A2 0 vd
+VA3 A3 0 vd
+VB0 B0 0 vd
+VB1 B1 0 vd
+VB2 B2 0 vd
+VB3 B3 0 vd
+VD0 D 0 vd
+*
+*VNotA0 notA0 0 0
+*VNotA1 notA1 0 0
+*VNotA2 notA2 0 0
+*VNotA3 notA3 0 0
+*
+VI0 I0 0 vd
+VI1 I1 0 0
+*VI2 I2 0 vd
+*VI3 I3 0 vd
+*VS0 S0 0 0
+*VS1 S1 0 0
+*
+.tran 1ps 10ns
+*
+.control
+run
+plot v(A0) v(A1) v(A2) v(A3) ylimit -1 3
+plot v(B0) v(B1) v(B2) v(B3) ylimit -1 3
+*
+plot v(I0) v(I1) ylimit -1 3
+plot v(S0) ylimit -1 3
+plot v(S1) ylimit -1 3
+plot v(S2) ylimit -1 3
+plot v(S3) ylimit -1 3
+.endc
+*
+.END
+
+ 
