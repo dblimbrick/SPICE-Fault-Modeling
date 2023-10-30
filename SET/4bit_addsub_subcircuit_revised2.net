@@ -54,30 +54,30 @@ Xaddsub A0 A1 A2 A3 B0 B1 B2 B3 notA0 notA1 notA2 notA3 mux2_0_out mux2_1_out mu
 VVDD VDD 0 vd
 Vgnd VGND 0 0
 Vdd VPWR VGND vd
-* A(0,1,2,3)= 1111 or 1010 or 0011
-* B(0,1,2,3)= 1011 or 0010 or 0010
-* Output = 4 or 0100, 8 or 1000, 1 or 0001
+* A(0,1,2,3)= Subtraction: 1111  ,  1010  ,   0011  ,    1011, 		Addition: 1000 ,  	1100
+* B(0,1,2,3)= Subtraction: 1011  ,  0010  ,   0010  ,    1111, 		Addition: 0010 ,  	0011
+* Output = Subtraction: 4 or 0100, 8 or 1000, 1 or 0001, 4 or 0100,  	Addition: 10 or 1010, 15 or 1111
 * I0 = 1
 * I1 = 0
-VA0 A0 0 0
+VA0 A0 0 vd
 VA1 A1 0 0
 VA2 A2 0 vd
-VA3 A3 0 vd
+VA3 A3 0 0
 VB0 B0 0 0
 VB1 B1 0 0
 VB2 B2 0 vd
 VB3 B3 0 0
 VD0 D 0 vd
 *
-VNotA0 notA0 0 0
+VNotA0 notA0 0 vd
 VNotA1 notA1 0 0
 VNotA2 notA2 0 vd
-VNotA3 notA3 0 vd
+VNotA3 notA3 0 0
 *
-VMux2_0 mux2_0_out 0 vd
+VMux2_0 mux2_0_out 0 0
 VMux2_1 mux2_1_out 0 vd
 VMux2_2 mux2_2_out 0 0
-VMux2_3 mux2_3_out 0 0
+VMux2_3 mux2_3_out 0 vd
 *
 VI0 I0 0 vd
 VI1 I1 0 0
