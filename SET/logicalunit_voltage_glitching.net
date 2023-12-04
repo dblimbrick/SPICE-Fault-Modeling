@@ -1,0 +1,100 @@
+* Logical Unit
+.lib '/home/adept/Desktop/caravel_mpw7/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice' tt
+.include '/home/adept/Desktop/caravel_mpw7/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice'
+*
+.param vd=1.8V
+*
+.include /home/adept/Desktop/ngSpice/Example_!/four_and_subcircuit1.net
+*.include /home/adept/Desktop/ngSpice/Example_!/four_or_subcircuit1.net
+*.include /home/adept/Desktop/ngSpice/Example_!/four_xor_subcircuit1.net
+*.include /home/adept/Desktop/ngSpice/Example_!/four_inv_subcircuit1.net
+*.include /home/adept/Desktop/ngSpice/Example_!/mux_subcircuit1.net
+*
+Xand A1 A2 A3 A4 B1 B2 B3 B4 out_and1 out_and2 out_and3 out_and4 VGND VPWR and
+*Xor A1 A2 A3 A4 B1 B2 B3 B4 out_or1 out_or2 out_or3 out_or4 VGND VPWR or
+*Xxor A1 A2 A3 A4 B1 B2 B3 B4 out_xor1 out_xor2 out_xor3 out_xor4 VGND VPWR xor
+*Xinv A1 A2 A3 A4 out_inv1 out_inv2 out_inv3 out_inv4 VGND VPWR inv
+*Xmux I0 I1 I2 I3 S0 S1 out_or1 VGND VPWR mux
+*
+*X2 A1 B1 VGND VGND VPWR VPWR out_orip sky130_fd_sc_hd__or2_1
+*X3 A2 B2 VGND VGND VPWR VPWR out_xorip sky130_fd_sc_hd__xor2_1
+*X4 A3 VGND VGND VPWR VPWR out_invip sky130_fd_sc_hd__inv_1
+*X5 out_and4ip out_orip out_xorip out_invip VGND VGND VPWR VPWR S0 S1 out_orip sky130_fd_sc_hd__or4_1
+*
+VVDD VDD 0 vd
+Vgnd VGND 0 0
+*Vdd VPWR VGND vd
+*Vdd VPWR VGND pulse(0 1.8 1p 350p 10p 1n 2n)
+Vdd VPWR VGND pulse(1.44 2.16 1p 350p 10p 1n 2n)
+*Vdd VPWR VGND pulse(0 2.16 1p 350p 10p 1n 2n)
+* A(1,2,3,4)= 1011    1011
+* B(1,2,3,4)= 0011 or 0010
+* First Example: I(0,1,2,3)= 1011
+* Second Example: I(0,1,2,3)= 0011
+* Third Example: I(0,1,2,3)= 1010
+* S0 = 0
+* S1 = 1
+VA1 A1 0 vd
+VA2 A2 0 0
+VA3 A3 0 vd
+VA4 A4 0 vd
+VB1 B1 0 0
+VB2 B2 0 0
+VB3 B3 0 vd
+VB4 B4 0 vd
+*
+VI0 I0 0 vd
+VI1 I1 0 0
+VI2 I2 0 vd
+VI3 I3 0 vd
+VS0 S0 0 0
+VS1 S1 0 0
+*
+*V1 A0 0 pulse(0 1.8 0 1n 1n 15u 25u)
+*V2 B1 0 pulse(0 1.8 0 1n 1n 20u 50u)
+*V3  0 pulse(0 1.8 0 1n 1n 30u 50u)
+*V4  0 pulse(0 1.8 0 1n 1n 70u 100u)
+*V5  0 pulse(0 1.8 0 1n 1n 100u 200u)
+*V6  0 pulse(0 1.8 0 1n 1n 50u 100u)
+*
+.tran 1ps 10ns
+*
+.control
+run
+plot v(A1) v(A2) v(A3) v(A4) ylimit -1 3
+plot v(B1) v(B2) v(B3) v(B4) ylimit -1 3
+*
+*plot v(out_and1) v(out_and2) v(out_and3) v(out_and4) ylimit -1 3
+*
+plot v(out_and1) ylimit -1 3 
+plot v(out_and2) ylimit -1 3 
+plot v(out_and3) ylimit -1 3 
+plot v(out_and4) ylimit -1 3 
+*
+*plot v(out_or1) v(out_or2) v(out_or3) v(out_or4) ylimit -1 3
+*
+*plot v(out_or1) ylimit -1 3
+*plot v(out_or2) ylimit -1 3
+*plot v(out_or3) ylimit -1 3
+*plot v(out_or4) ylimit -1 3 
+*
+*plot v(out_xor1) v(out_xor2) v(out_xor3) v(out_xor4) ylimit -1 3
+*
+*plot v(out_xor1) ylimit -1 3
+*plot v(out_xor2) ylimit -1 3
+*plot v(out_xor3) ylimit -1 3
+*plot v(out_xor4) ylimit -1 3 
+*
+*plot v(out_inv1) v(out_inv2) v(out_inv3) v(out_inv4) ylimit -1 3 
+*
+*plot v(out_inv1) ylimit -1 3
+*plot v(out_inv2) ylimit -1 3
+*plot v(out_inv3) ylimit -1 3
+*plot v(out_inv4) ylimit -1 3
+*
+*plot v(I0) v(I1) v(I2) v(I3) ylimit -1 3
+*plot v(S0) v(S1) ylimit -1 3
+*plot v(out_or1) ylimit -1 3 
+.endc
+*
+.END
