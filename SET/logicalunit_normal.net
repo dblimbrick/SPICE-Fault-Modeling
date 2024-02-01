@@ -109,7 +109,8 @@ plot v(out_inv4) ylimit -1 3
 *plot v(S0) v(S1) ylimit -1 3
 *plot v(out_or1) ylimit -1 3 
 
-plot v(VPWR) ylimit -1 3 
+*plot v(VPWR) ylimit -1 3 
+plot i(Vdd)
 .endc
 *
 .END
