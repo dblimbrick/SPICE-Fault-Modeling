@@ -1,0 +1,37 @@
+* CMOS inverter testbench
+
+* Include SkyWater sky130 device models
+.lib "/home/daniel/.volare/sky130A/libs.tech/ngspice/sky130.lib.spice" tt
+.include "/home/daniel/.volare/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice"
+
+* Disable monte carlo variation
+.param mc_mm_switch=0
+.param pVDD = 1.8
+
+* Power signals
+VDD vdd 0 dc {pVDD}
+VSS vss 0 0
+
+* Define pulse sources for input
+Vpulse1 in 0 PULSE (0 {pVDD} 0 1n 1n 10n 20n)
+
+* DUT
+X0 in vss vss vdd vdd out sky130_fd_sc_hd__inv_1
+
+* Transient analysis to see the NAND2 logic operation
+.tran 0.1n 20n
+
+* Skywater paramters for accurate simulation
+.option gmin=1e-15
+.option scale=1e-6
+
+* Run simulation
+.control
+    run
+    plot in out
+.endc
+
+.end
+
+
+

@@ -1,0 +1,35 @@
+* CMOS NAND2 testbench
+
+* Include SkyWater sky130 device models
+.lib "/home/daniel/.volare/sky130A/libs.tech/ngspice/sky130.lib.spice" tt  ; Replace with your actual path if different
+.include "/home/daniel/.volare/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice"  ; Replace if needed
+.param mc_mm_switch=0
+
+.param pVDD = 1.8
+
+VDD vdd 0 dc {pVDD}
+VSS vss 0 0
+
+* Input signals
+*vin1 in1 vss 0
+*vin2 in2 vss 0
+
+* DUT (Device Under Test) - NAND2 standard cell
+X0 in1 in2 vss vss vdd vdd out sky130_fd_sc_hd__nand2_1  ; Replace nand2_1 with correct cell name
+
+.option gmin=1e-15
+.option scale=1e-6
+
+* Transient analysis to see the NAND2 logic operation
+.tran 0.1n 20n
+
+* Define pulse sources for inputs (example)
+Vpulse1 in1 0 PULSE (0 {pVDD} 0 1n 1n 10n 20n)
+Vpulse2 in2 0 PULSE (0 {pVDD} 5n 1n 1n 10n 20n) ; Delayed pulse
+
+.control
+    run
+    plot in1 in2 out
+.endc
+
+.end
